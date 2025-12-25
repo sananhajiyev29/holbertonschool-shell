@@ -1,2 +1,2 @@
-Init files, variables and expansions project.
-Each script demonstrates usage of shell aliases, variables, and expansions.
+#!/bin/bash
+# Describes each script in init_files_variables_and_expansions
