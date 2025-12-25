@@ -1,3 +1,3 @@
-This project contains shell scripts related to initialization files, variables, expansions, and aliases.
+Init files, variables and expansions project.
 
-0-alias: Creates an alias named ls that removes all files in the current directory.
+Each script demonstrates usage of shell aliases, variables, and expansions.
