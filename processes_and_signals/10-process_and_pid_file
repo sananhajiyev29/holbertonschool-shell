@@ -2,6 +2,10 @@
 # This script creates a PID file, runs indefinitely, and handles signals
 
 PID_FILE="/var/run/myscript.pid"
+if [ ! -w "/var/run" ]
+then
+    PID_FILE="/tmp/myscript.pid"
+fi
 
 cleanup() {
     rm -f "$PID_FILE"
