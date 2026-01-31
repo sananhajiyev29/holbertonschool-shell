@@ -1,30 +1,46 @@
 #!/usr/bin/env bash
 # This script manages the manage_my_process daemon
 
-PID_FILE="/var/run/my_process.pid"
+RUN_PID_FILE="/var/run/my_process.pid"
+TMP_PID_FILE="/tmp/my_process.pid"
+
+create_pid_link_if_needed() {
+    if [ ! -w "/var/run" ]
+    then
+        echo "$!" > "$TMP_PID_FILE"
+        ln -sf "$TMP_PID_FILE" "$RUN_PID_FILE"
+    else
+        echo "$!" > "$RUN_PID_FILE"
+    fi
+}
+
+remove_pid_files() {
+    rm -f "$RUN_PID_FILE"
+    rm -f "$TMP_PID_FILE"
+}
 
 case "$1" in
     start)
         ./manage_my_process > /dev/null 2>&1 &
-        echo "$!" > "$PID_FILE"
+        create_pid_link_if_needed
         echo "manage_my_process started"
         ;;
     stop)
-        if [ -f "$PID_FILE" ]
+        if [ -f "$RUN_PID_FILE" ]
         then
-            kill "$(cat "$PID_FILE")" > /dev/null 2>&1
-            rm -f "$PID_FILE"
+            kill "$(cat "$RUN_PID_FILE")" > /dev/null 2>&1
         fi
+        remove_pid_files
         echo "manage_my_process stopped"
         ;;
     restart)
-        if [ -f "$PID_FILE" ]
+        if [ -f "$RUN_PID_FILE" ]
         then
-            kill "$(cat "$PID_FILE")" > /dev/null 2>&1
-            rm -f "$PID_FILE"
+            kill "$(cat "$RUN_PID_FILE")" > /dev/null 2>&1
         fi
+        remove_pid_files
         ./manage_my_process > /dev/null 2>&1 &
-        echo "$!" > "$PID_FILE"
+        create_pid_link_if_needed
         echo "manage_my_process restarted"
         ;;
     *)
